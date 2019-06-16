@@ -1,5 +1,6 @@
 from sklearn.linear_model import LinearRegression, SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
+from x_g_b_classifier_wrapper import XGBClassifierWrapper
 
 
 class ModelPreceptor:
@@ -14,6 +15,9 @@ class ModelPreceptor:
 
     def use_sgd_model(self):
         self.model = SGDClassifier()
+
+    def use_xgb_model(self):
+        self.model = XGBClassifierWrapper()
 
     def fit(self, data, labels):
         if self.model is None:

@@ -8,16 +8,19 @@ class MLFitterFactory:
     models = {
         'bayesian': lambda p: p.use_bayesian_model(),
         'linear': lambda p: p.use_linear_model(),
-        'sgd': lambda p: p.use_sgd_model()
+        'sgd': lambda p: p.use_sgd_model(),
+        'xgb': lambda p: p.use_xgb_model()
     }
 
-    def create(self, options={}):
+    def create(self, options=None):
+        if options is None:
+            options = {}
         model_preceptor = ModelPreceptor()
         self.choose_model(model_preceptor, options.get('model', 'bayesian'))
         return MLFitter(vectorizer=Vectorizer(), data_manager=DataManager(), model_preceptor=model_preceptor)
 
-    def choose_model(self, model_perceptor, name):
+    def choose_model(self, model_preceptor, name):
         model = self.models.get(name, False)
         if not model:
             raise Exception("No model found. Available models: {%s}" % self.models.keys())
-        model(model_perceptor)
+        model(model_preceptor)
