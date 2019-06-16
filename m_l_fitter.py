@@ -2,8 +2,8 @@ class MLFitter:
     vectorizer = None
     data_manager = None
     model_preceptor = None
-    data = None
-    predictions = None
+    data_to_train = None
+    data_to_fit = None
 
     def __init__(self, *args, **kwargs):
         self.vectorizer = self.__get_param(kwargs, 'vectorizer')
@@ -18,39 +18,30 @@ class MLFitter:
         return param
 
     def train(self, data, labels):
-        self.data = data
-        self.__preprocess_data().__vectorize().__fit_model(labels)
+        if self.data_to_fit is None:
+            data = self.__preprocess_data(data)
+            data = self.__vectorize(data)
+            self.data_to_fit = data
+        self.__fit_model(self.data_to_fit, labels)
 
     def predict(self, data):
-        self.data = data
-        self.__preprocess_data().__vectorize_predictions().__predict()
-        return self.predictions
+        if self.data_to_train is None:
+            data = self.__preprocess_data(data)
+            data = self.__vectorize_predictions(data)
+            self.data_to_train = data
+        return self.__predict(self.data_to_train)
 
-    def __vectorize(self):
-        if self.data is None:
-            raise Exception('No data for vectorization')
-        self.data = self.vectorizer.fit_transform(self.data)
-        return self
+    def __vectorize(self, data):
+        return self.vectorizer.fit_transform(data)
 
-    def __vectorize_predictions(self):
-        if self.data is None:
-            raise Exception('No data for vectorization')
-        self.data = self.vectorizer.transform(self.data)
-        return self
+    def __vectorize_predictions(self, data):
+        return self.vectorizer.transform(data)
 
-    def __preprocess_data(self):
-        if self.data is None:
-            raise Exception('No data for preprocessing')
-        self.data = self.data_manager.process_data(self.data)
-        return self
+    def __preprocess_data(self, data):
+        return self.data_manager.process_data(data)
 
-    def __fit_model(self, labels):
-        if self.data is None:
-            raise Exception('No data for fitting')
-        self.data = self.model_preceptor.fit(self.data, labels)
-        return self
+    def __fit_model(self, data, labels):
+        self.model_preceptor.fit(data, labels)
 
-    def __predict(self):
-        if self.data is None:
-            raise Exception('No data for prediction')
-        self.predictions = self.model_preceptor.predict(self.data)
+    def __predict(self, data):
+        return self.model_preceptor.predict(data)
